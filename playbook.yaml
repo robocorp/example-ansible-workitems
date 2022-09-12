@@ -1,0 +1,23 @@
+- name: Doing complicated stuff with failover
+  hosts: localhost
+  vars:
+    destinations:
+      1: Email
+      2: Slack
+  tasks:
+  - name: Complicated stuff
+    block:
+      - name: this may or may not fail
+        ansible.builtin.shell: a=$(($RANDOM % 2 + 1)); (exit $a);
+    rescue:
+      - name: call robocorp robot
+        uri:
+          url: https://api.eu1.robocorp.com/process-v1/workspaces/secrets-here
+          method: POST
+          return_content: yes
+          # change here 1 with 2 for sending slack instead of email
+          # bonus points: extract the return code from the logs and use those to select email or slack
+          body: {"Destination": "{{ destinations[1] }}", "Logs": "{{ ansible_failed_result }}"}
+          body_format: json
+          headers: 
+            Authorization: RC-WSKEY big-secret-hidden-here

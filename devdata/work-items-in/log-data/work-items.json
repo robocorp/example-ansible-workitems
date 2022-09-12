@@ -1,0 +1,9 @@
+[
+  {
+      "payload": {
+         "Destination": "Email",
+         "Logs": "Something bad happened"
+      },
+      "files": {}
+  }
+]
